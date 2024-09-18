@@ -20,10 +20,8 @@ public class GET {
             con = (HttpURLConnection) url.openConnection();
             con.setRequestMethod("GET");
 
-            // Get the response code
             statusCode = con.getResponseCode();
 
-            // Read the response
             reader = new BufferedReader(new InputStreamReader(con.getInputStream()));
             String line;
             while ((line = reader.readLine()) != null) {
@@ -35,7 +33,6 @@ public class GET {
         } catch (IOException e) {
             System.out.println("IO Exception: " + e.getMessage());
         } finally {
-            // Close resources
             if (reader != null) {
                 try {
                     reader.close();
