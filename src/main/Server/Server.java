@@ -15,14 +15,33 @@ public class Server {
     public Server(int port) throws IOException {
         server = HttpServer.create(new InetSocketAddress(port), 0);
         server.createContext("/", new BaseURL());
+        server.createContext("/api/v1", new v1Base());
         server.createContext("/api/get", new GetHandler());
         server.createContext("/api/post", new PostHandler());
         server.setExecutor(null);
     }
+    
 
     public void start() {
         server.start();
         System.out.println("Server started on port " + server.getAddress().getPort() + "...");
+    }
+
+    static class v1Base implements HttpHandler {
+        private static final String V1Version = "1.0";
+
+        @Override
+        public void handle(HttpExchange exchange) throws IOException {
+            if ("GET".equals(exchange.getRequestMethod())) {
+                String response = "CamAX API v1, Current v1 Version: " + V1Version;
+                exchange.sendResponseHeaders(200, response.getBytes().length);
+                OutputStream os = exchange.getResponseBody();
+                os.write(response.getBytes());
+                os.close();
+            } else {
+                exchange.sendResponseHeaders(405, -1);
+            }
+        }
     }
 
     static class BaseURL implements HttpHandler {
